@@ -1,18 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Test</title>
-    <link rel="stylesheet", href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Women in Natural Product Research</title>
+
+  <!-- Add DataTables CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <link rel="stylesheet" href="style.css">
+
+    <!-- Add DataTables JavaScript and jQuery -->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div style="text-align: center;">
-   <iframe
-           class="custom-google-sheet"
-           width="80%"
-           height="100%"
-           src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSvu1_nXJhmq6gDb7afxTKTocpWizsqVYrGLC4C988NoM9u4GpW88Ss0g31W1GcIW5y-1AK4HURz1bI/pubhtml?gid=389565937&amp;chrome=false&amp;range=B1:K4&amp;single=true&amp;widget=false&amp;headers=false">
-   </iframe>
+
+<h1>Women in Natural Product Research</h1>
+
+<div class="table-scrollable">
+    <table id="sheetTable" class="display">
+        <!-- Table will be populated with the script -->
+    </table>
 </div>
+
+<hr>
+<p style="text-align:left;">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdqLWQYgDDemkx162DRsY14LVmRX46MLSUTCJDYn-kJ1p8bIw/viewform?usp=sf_link">Become part of this list.</a>
+    <span style="float:right;">
+        <a href="user_agreement.html">User Agreement</a>
+    </span>
+</p>
+
+<script>
+    const opensheetUrl = 'https://opensheet.elk.sh/166lmmH-JMU2YJsLyAh3m99kxGVftIndy5kE6-bj5YFg/table';
+
+    // Function to fetch data from OpenSheet
+    function fetchData() {
+
+        fetch(opensheetUrl)
+            .then(response => response.json())
+            .then(data => {
+                const table = $('#sheetTable').DataTable({
+                    info: true,
+                    paging: false,
+                    searching: true,
+                    data: data,
+                    columns:[
+                        { title: "Name", data: "Name" },
+                        { title: "University/organization", data: "University/organization" },
+                        { title: "Email address", data: "Email address" },
+                        { title: "Title", data: "Title" },
+                        { title: "Broad Research Category 1", data: "Broad Research Category 1" },
+                        { title: "Broad Research Category 2", data: "Broad Research Category 2" },
+                        { title: "Country", data: "Country" },
+                        { title: "Website", data: "Website" },
+                        { title: "Additional Research Description", data: "Additional Research Description" }
+                    ],
+                    columnDefs: [
+                        {"targets": [2], "render": function ( data, type, row, meta ) {
+                                return data === null || data === undefined || data === '' ? '' : '<a href="mailto:'+data+'">'+data+'</a>'
+                            }},
+                        {"targets": [7], "render": function ( data, type, row, meta ) {
+                                return data === null || data === undefined || data === '' ? '' : '<a href="'+data+'" target="_blank">'+data+'</a>'
+                            }},
+                        {
+                            targets: '_all', // This targets all columns
+                            defaultContent: '', // This sets a default content for empty fields
+                            render: function(data, type, row, meta) {
+                                // If the data is null, undefined, or an empty string, return an empty string
+                                // Otherwise, return the data as is
+                                return data == null || data === '' ? '' : data;
+                            }
+                        }
+                    ],
+                    language: {
+                        search: "",
+                        searchPlaceholder: "Search"
+                    },
+                    order: [] // Disable initial sorting
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Call the fetchData function when the page loads
+    window.onload = fetchData;
+</script>
+
 </body>
 </html>
